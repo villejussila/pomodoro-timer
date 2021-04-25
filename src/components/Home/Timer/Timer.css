@@ -1,0 +1,41 @@
+.timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 80%;
+  height: 80%;
+  max-width: 1200px;
+  min-width: 700px;
+}
+.timer-control-buttons {
+  width: 50%;
+  display: flex;
+  justify-content: space-evenly;
+  height: 2rem;
+}
+button {
+  width: 8rem;
+  height: 4rem;
+  margin: 5px;
+  font-size: 1.75rem;
+  outline: none;
+  border: none;
+  background-color: #242424;
+  cursor: pointer;
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px 0px #e0e0e03d;
+}
+button:hover {
+  background-color: var(--naples-yellow);
+  color: #242424;
+  transition: background-color 1s, color 0.5s ease-in-out;
+}
+.time {
+  font-size: 10rem;
+  margin-top: 10rem;
+  margin-bottom: 2rem;
+  color: var(--naples-yellow);
+  text-shadow: 1px 3px 50px #e0e0e04b;
+}

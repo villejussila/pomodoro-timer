@@ -1,0 +1,8 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+  /* background-color: var(--lavender-blush); */
+  background-color: #474747;
+  /* background-color: white; */
+  overflow: hidden;
+}

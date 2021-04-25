@@ -1,0 +1,46 @@
+.content {
+  display: flex;
+  align-items: center;
+  padding-top: 2rem;
+  color: #f0edee;
+  min-height: 100vh;
+  width: 90%;
+  /* background-color: #e0e0e017; */
+  margin: 1rem auto;
+  flex-direction: column;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.content::after {
+  content: "";
+  height: 100%;
+  width: 100%;
+  top: 0;
+  /* background-image: url(../../images/bg_bw.jpeg); */
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: right;
+  background-size: cover;
+  opacity: 0.2;
+  overflow: hidden;
+  pointer-events: none;
+  cursor: default;
+  /* -webkit-animation: opacity-change 5s linear infinite both;
+  animation: opacity-change 5s linear infinite both; */
+}
+@-webkit-keyframes opacity-change {
+  0% {
+    opacity: 0.12;
+  }
+  100% {
+    opacity: 0.05;
+  }
+}
+@keyframes opacity-change {
+  0% {
+    opacity: 0.12;
+  }
+  100% {
+    opacity: 0.05;
+  }
+}

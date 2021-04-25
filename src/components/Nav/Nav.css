@@ -1,0 +1,26 @@
+Nav {
+  position: sticky;
+  height: 6rem;
+  min-width: 100vw;
+  background-color: #242424;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  align-items: center;
+  box-shadow: 0 0px 10px 0 black;
+  z-index: 1000;
+}
+ul {
+  display: flex;
+  flex-direction: row;
+  text-decoration: none;
+  list-style-type: none;
+  justify-content: space-between;
+  width: 90%;
+}
+ul li {
+  text-decoration: none;
+  margin: 5px;
+  color: #f0edee;
+  font-size: 1.2rem;
+}
