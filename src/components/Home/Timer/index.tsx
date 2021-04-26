@@ -1,40 +1,50 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useAppSelector, useAppDispatch } from "../../App/hooks";
 import {
   minutesToMilliseconds,
   getCountingDownMinutesAndSeconds,
+  convertStringTimeToNumberFormat,
 } from "../../../utils";
 import "./Timer.css";
+import {
+  timerStopped,
+  timerRunning,
+  timerTime,
+  timerEndTime,
+  timerStoppingTime,
+} from "../../../actions/timer";
 // Types
 type Milliseconds = number;
 
 const Timer = () => {
-  const [time, setTime] = useState("");
-  const [endTime, setEndTime] = useState<number>();
-  const [isTimerStopped, setIsTimerStopped] = useState(true);
+  // const [time, setTime] = useState("");
+  // const [endTime, setEndTime] = useState<number>();
+  // const [isTimerStoppedOld, setIsTimerStoppedOld] = useState(true);
   const timeRef = useRef<NodeJS.Timeout>();
+  const timer = useAppSelector((state) => state.timerReducer);
+  const dispatch = useAppDispatch();
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  let resetRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     function updateTimer() {
       const now = new Date().getTime();
-      if (endTime) {
-        const target = endTime - now > 0 ? endTime - now : 0;
-        setIsTimerStopped(false);
-        const countdownTimes = getCountingDownMinutesAndSeconds(target);
+      if (timer.endTime) {
+        const target = timer.endTime - now > 0 ? timer.endTime - now : 0;
+        const countdownTime = getCountingDownMinutesAndSeconds(target);
         if (target >= 0) {
-          return setTime(
-            `${countdownTimes.minutesPadded}:${countdownTimes.secondsPadded}`
+          return dispatch(
+            timerTime(
+              `${countdownTime.minutesPadded}:${countdownTime.secondsPadded}`
+            )
           );
         }
-        setTime("00:00");
-        setIsTimerStopped(true);
+        dispatch(timerTime("00:00"));
+        dispatch(timerStopped());
       }
     }
     timeRef.current = setInterval(() => updateTimer(), 100);
-  }, [endTime]);
-
-  useEffect(() => {
-    console.log(`isTimerStopped`, isTimerStopped);
-  }, [isTimerStopped]);
+  }, [timer.endTime, dispatch]);
 
   function getEndTimeInMs(minutes: number): Milliseconds {
     const startTimeInMs = new Date().getTime();
@@ -43,24 +53,56 @@ const Timer = () => {
   }
 
   function handleStart(timerDurationMinutes: number) {
-    isTimerStopped && setEndTime(getEndTimeInMs(timerDurationMinutes));
+    if (timer.stoppingTime && timer.isStopped) {
+      dispatch(
+        timerEndTime(
+          getEndTimeInMs(convertStringTimeToNumberFormat(timer.stoppingTime))
+        )
+      );
+      dispatch(timerRunning());
+      return;
+    }
+    if (timer.isStopped) {
+      dispatch(timerEndTime(getEndTimeInMs(timerDurationMinutes)));
+      dispatch(timerRunning());
+    }
   }
   function handleStop() {
-    setIsTimerStopped(true);
+    dispatch(timerStopped());
     if (timeRef.current) {
       clearInterval(timeRef.current);
     }
+    dispatch(timerStoppingTime(timer.time));
   }
-
+  useEffect(() => {
+    if (isMouseDown) {
+      resetRef.current = setTimeout(() => {
+        console.log("reset");
+        dispatch(timerStopped());
+        if (timeRef.current) {
+          clearInterval(timeRef.current);
+        }
+        dispatch(timerStoppingTime(null));
+        dispatch(timerTime("25:00"));
+      }, 3000);
+    } else {
+      resetRef.current && clearTimeout(resetRef.current);
+    }
+  }, [isMouseDown, dispatch]);
   return (
     <>
       <div className="timer">
-        <div className="time">{time || <p>25:00</p>}</div>
+        <div className="time">{timer.time || <p>25:00</p>}</div>
         <div className="timer-control-buttons">
           <button className="start-button" onClick={() => handleStart(25)}>
             Start
           </button>
-          <button className="stop-button" onClick={handleStop}>
+          <button
+            className={/* isMouseDown ? "stop-button reset" : */ "stop-button"}
+            onClick={handleStop}
+            onMouseDown={() => setIsMouseDown(true)}
+            onMouseUp={() => setIsMouseDown(false)}
+          >
             Stop
           </button>
         </div>

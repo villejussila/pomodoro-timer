@@ -1,10 +1,11 @@
 .timer {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   width: 80%;
-  height: 80%;
+  min-height: 1000px;
+  /* max-height: 80%; */
   max-width: 1200px;
   min-width: 700px;
 }
@@ -12,13 +13,12 @@
   width: 50%;
   display: flex;
   justify-content: space-evenly;
-  height: 2rem;
 }
 button {
   width: 8rem;
   height: 4rem;
   margin: 5px;
-  font-size: 1.75rem;
+  font-size: 2rem;
   outline: none;
   border: none;
   background-color: #242424;
@@ -26,6 +26,7 @@ button {
   color: white;
   border-radius: 10px;
   box-shadow: 0 0 20px 0px #e0e0e03d;
+  user-select: none;
 }
 button:hover {
   background-color: var(--naples-yellow);
@@ -34,8 +35,25 @@ button:hover {
 }
 .time {
   font-size: 10rem;
-  margin-top: 10rem;
+  /* margin-top: 10rem; */
   margin-bottom: 2rem;
   color: var(--naples-yellow);
   text-shadow: 1px 3px 50px #e0e0e04b;
 }
+.stop-button:active {
+  background-color: var(--china-pink);
+  transition: background-color 2.5s linear;
+  transition-delay: 0.5s;
+  /* animation: reset 3s linear infinite both !important; */
+}
+/* .reset {
+  animation: reset 3s linear;
+}
+@keyframes reset {
+  0% {
+    background-color: var(--naples-yellow) !important;
+  }
+  100% {
+    background-color: var(--granny-smith-apple) !important;
+  }
+} */

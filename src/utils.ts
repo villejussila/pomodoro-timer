@@ -2,7 +2,10 @@
 export function minutesToMilliseconds(minutes: number) {
   return minutes * 1000 * 60;
 }
-export interface CountingDownMinutesAndSeconds {
+/* 
+ -------------------
+*/
+interface CountingDownMinutesAndSeconds {
   minutes: number;
   seconds: number;
   minutesPadded: string;
@@ -21,4 +24,10 @@ export function getCountingDownMinutesAndSeconds(
     minutesPadded,
     secondsPadded,
   };
+}
+export function convertStringTimeToNumberFormat(time: string) {
+  const times = time.split(":");
+  const minutes = Number(times[0]);
+  const seconds = Number(times[1]) / 60;
+  return minutes + seconds;
 }
