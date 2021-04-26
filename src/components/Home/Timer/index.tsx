@@ -12,6 +12,8 @@ import {
   timerTime,
   timerEndTime,
   timerStoppingTime,
+  timerStatus,
+  ITimerStatus,
 } from "../../../actions/timer";
 // Types
 type Milliseconds = number;
@@ -60,11 +62,13 @@ const Timer = () => {
         )
       );
       dispatch(timerRunning());
+      dispatch(timerStatus(ITimerStatus.Work));
       return;
     }
     if (timer.isStopped) {
       dispatch(timerEndTime(getEndTimeInMs(timerDurationMinutes)));
       dispatch(timerRunning());
+      dispatch(timerStatus(ITimerStatus.Work));
     }
   }
   function handleStop() {
