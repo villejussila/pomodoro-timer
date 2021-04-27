@@ -6,8 +6,10 @@ import {
   END_TIME,
   TIMER_STOPPING_TIME,
   TIMER_STATUS,
+  TIMER_COMPLETED,
   ITimerStatus,
   ActionTypes,
+  Completed,
 } from "../actions/timer";
 
 interface ITimerState {
@@ -16,13 +18,15 @@ interface ITimerState {
   endTime: number | null;
   stoppingTime: string | null;
   timerStatus: ITimerStatus | null;
+  timerCompleted: Completed;
 }
 const initialState: ITimerState = {
   isStopped: true,
-  time: "",
+  time: "25:00",
   endTime: null,
   stoppingTime: null,
   timerStatus: null,
+  timerCompleted: { completedType: null, isCompleted: false },
 };
 
 const timerReducer = (state = initialState, action: ActionTypes) => {
@@ -56,6 +60,11 @@ const timerReducer = (state = initialState, action: ActionTypes) => {
       return {
         ...state,
         timerStatus: action.payload,
+      };
+    case TIMER_COMPLETED:
+      return {
+        ...state,
+        timerCompleted: action.payload,
       };
     default:
       return state;

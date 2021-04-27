@@ -5,6 +5,9 @@ export function minutesToMilliseconds(minutes: number) {
 /* 
  -------------------
 */
+// Types
+type Milliseconds = number;
+
 interface CountingDownMinutesAndSeconds {
   minutes: number;
   seconds: number;
@@ -30,4 +33,9 @@ export function convertStringTimeToNumberFormat(time: string) {
   const minutes = Number(times[0]);
   const seconds = Number(times[1]) / 60;
   return minutes + seconds;
+}
+export function getEndTimeInMs(minutes: number): Milliseconds {
+  const startTimeInMs = new Date().getTime();
+  const endTimeInMs = startTimeInMs + minutesToMilliseconds(minutes);
+  return endTimeInMs;
 }

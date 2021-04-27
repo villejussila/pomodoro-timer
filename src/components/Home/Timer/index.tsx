@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../App/hooks";
 import {
-  minutesToMilliseconds,
   getCountingDownMinutesAndSeconds,
   convertStringTimeToNumberFormat,
+  getEndTimeInMs,
 } from "../../../utils";
 import "./Timer.css";
 import {
@@ -14,70 +14,70 @@ import {
   timerStoppingTime,
   timerStatus,
   ITimerStatus,
+  timerCompleted,
 } from "../../../actions/timer";
-// Types
-type Milliseconds = number;
 
 const Timer = () => {
-  // const [time, setTime] = useState("");
-  // const [endTime, setEndTime] = useState<number>();
-  // const [isTimerStoppedOld, setIsTimerStoppedOld] = useState(true);
   const timeRef = useRef<NodeJS.Timeout>();
+  const resetRef = useRef<NodeJS.Timeout>();
   const timer = useAppSelector((state) => state.timerReducer);
   const dispatch = useAppDispatch();
   const [isMouseDown, setIsMouseDown] = useState(false);
-  let resetRef = useRef<NodeJS.Timeout>();
 
+  interface ReturnTimerStartTime {
+    minutes: number;
+    time: string;
+  }
+  const determineTimerStartTime = useCallback(
+    (timerWorkOrBreak: ITimerStatus): ReturnTimerStartTime => {
+      switch (timerWorkOrBreak) {
+        case ITimerStatus.Work:
+          return { minutes: 25, time: "25:00" };
+        case ITimerStatus.ShortBreak:
+          return { minutes: 5, time: "05:00" };
+        case ITimerStatus.LongBreak:
+          return { minutes: 15, time: "15:00" };
+        default:
+          return { minutes: 25, time: "25:00" };
+      }
+    },
+    []
+  );
+
+  //Updating timer
   useEffect(() => {
     function updateTimer() {
+      if (timer.isStopped) return;
       const now = new Date().getTime();
       if (timer.endTime) {
         const target = timer.endTime - now > 0 ? timer.endTime - now : 0;
         const countdownTime = getCountingDownMinutesAndSeconds(target);
-        if (target >= 0) {
+        if (target > 0) {
           return dispatch(
             timerTime(
               `${countdownTime.minutesPadded}:${countdownTime.secondsPadded}`
             )
           );
         }
+        timeRef.current && clearInterval(timeRef.current);
         dispatch(timerTime("00:00"));
         dispatch(timerStopped());
       }
     }
     timeRef.current = setInterval(() => updateTimer(), 100);
-  }, [timer.endTime, dispatch]);
+  }, [timer.endTime, timer.timerStatus, timer.isStopped, dispatch]);
 
-  function getEndTimeInMs(minutes: number): Milliseconds {
-    const startTimeInMs = new Date().getTime();
-    const endTimeInMs = startTimeInMs + minutesToMilliseconds(minutes);
-    return endTimeInMs;
-  }
-
-  function handleStart(timerDurationMinutes: number) {
-    if (timer.stoppingTime && timer.isStopped) {
+  useEffect(() => {
+    if (timer.isStopped && timer.time === "00:00") {
       dispatch(
-        timerEndTime(
-          getEndTimeInMs(convertStringTimeToNumberFormat(timer.stoppingTime))
-        )
+        timerCompleted({
+          completedType: timer.timerStatus,
+          isCompleted: true,
+        })
       );
-      dispatch(timerRunning());
-      dispatch(timerStatus(ITimerStatus.Work));
-      return;
     }
-    if (timer.isStopped) {
-      dispatch(timerEndTime(getEndTimeInMs(timerDurationMinutes)));
-      dispatch(timerRunning());
-      dispatch(timerStatus(ITimerStatus.Work));
-    }
-  }
-  function handleStop() {
-    dispatch(timerStopped());
-    if (timeRef.current) {
-      clearInterval(timeRef.current);
-    }
-    dispatch(timerStoppingTime(timer.time));
-  }
+  }, [timer.isStopped, timer.time, timer.timerStatus, dispatch]);
+  //Reset timer
   useEffect(() => {
     if (isMouseDown) {
       resetRef.current = setTimeout(() => {
@@ -87,22 +87,64 @@ const Timer = () => {
           clearInterval(timeRef.current);
         }
         dispatch(timerStoppingTime(null));
-        dispatch(timerTime("25:00"));
-      }, 3000);
+        if (timer.timerStatus) {
+          const { time } = determineTimerStartTime(timer.timerStatus);
+          dispatch(timerTime(time));
+        }
+      }, 2000);
     } else {
       resetRef.current && clearTimeout(resetRef.current);
     }
-  }, [isMouseDown, dispatch]);
+  }, [isMouseDown, timer.timerStatus, determineTimerStartTime, dispatch]);
+
+  function handleStart(timerWorkOrBreak: ITimerStatus) {
+    //Starting
+    if (timer.isStopped) {
+      const time = determineTimerStartTime(timerWorkOrBreak);
+      dispatch(timerEndTime(getEndTimeInMs(time.minutes)));
+      dispatch(timerRunning());
+      dispatch(timerStatus(timerWorkOrBreak));
+    }
+    //Continuing
+    if (timer.stoppingTime && timer.isStopped) {
+      continueTimer(timer.stoppingTime, timerWorkOrBreak);
+      return;
+    }
+  }
+  function handleStop() {
+    dispatch(timerStopped());
+    if (timeRef.current) {
+      clearInterval(timeRef.current);
+    }
+    dispatch(timerStoppingTime(timer.time));
+  }
+
+  function continueTimer(
+    timerStoppingTime: string,
+    timerWorkOrBreak: ITimerStatus
+  ) {
+    dispatch(
+      timerEndTime(
+        getEndTimeInMs(convertStringTimeToNumberFormat(timerStoppingTime))
+      )
+    );
+    dispatch(timerRunning());
+    dispatch(timerStatus(timerWorkOrBreak));
+  }
+
   return (
     <>
       <div className="timer">
-        <div className="time">{timer.time || <p>25:00</p>}</div>
+        <div className="time">{timer.time}</div>
         <div className="timer-control-buttons">
-          <button className="start-button" onClick={() => handleStart(25)}>
+          <button
+            className="start-button"
+            onClick={() => handleStart(ITimerStatus.Work)}
+          >
             Start
           </button>
           <button
-            className={/* isMouseDown ? "stop-button reset" : */ "stop-button"}
+            className={"stop-button"}
             onClick={handleStop}
             onMouseDown={() => setIsMouseDown(true)}
             onMouseUp={() => setIsMouseDown(false)}

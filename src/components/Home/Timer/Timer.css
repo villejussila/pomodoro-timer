@@ -4,7 +4,6 @@
   align-items: center;
   flex-direction: column;
   width: 80%;
-  min-height: 1000px;
   /* max-height: 80%; */
   max-width: 1200px;
   min-width: 700px;
@@ -42,8 +41,8 @@ button:hover {
 }
 .stop-button:active {
   background-color: var(--china-pink);
-  transition: background-color 2.5s linear;
-  transition-delay: 0.5s;
+  transition: background-color 1.75s linear;
+  transition-delay: 0.25s;
   /* animation: reset 3s linear infinite both !important; */
 }
 /* .reset {

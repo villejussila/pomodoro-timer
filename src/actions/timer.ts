@@ -4,6 +4,8 @@ export const TIMER_TIME = "TIME";
 export const END_TIME = "END_TIME";
 export const TIMER_STOPPING_TIME = "TIMER_STOPPING_TIME";
 export const TIMER_STATUS = "TIMER_STATUS";
+export const TIMER_COMPLETED = "TIMER_COMPLETED";
+
 
 export enum ITimerStatus {
   Work = "WORK",
@@ -11,13 +13,20 @@ export enum ITimerStatus {
   LongBreak = "LONG_BREAK",
 }
 
+export type Completed = {
+  completedType: ITimerStatus | null;
+  isCompleted: boolean;
+};
+
 export type ActionTypes =
   | { type: typeof TIMER_STOPPED }
   | { type: typeof TIMER_RUNNING }
   | { type: typeof TIMER_TIME; payload: string }
   | { type: typeof END_TIME; payload: number }
   | { type: typeof TIMER_STOPPING_TIME; payload: string | null }
-  | { type: typeof TIMER_STATUS; payload: ITimerStatus };
+  | { type: typeof TIMER_STATUS; payload: ITimerStatus }
+  | { type: typeof TIMER_COMPLETED; payload: Completed }
+ 
 
 export const timerStopped = (): ActionTypes => {
   return {
@@ -29,16 +38,16 @@ export const timerRunning = (): ActionTypes => {
     type: TIMER_RUNNING,
   };
 };
-export const timerTime = (data: string): ActionTypes => {
+export const timerTime = (countdownTime: string): ActionTypes => {
   return {
     type: TIMER_TIME,
-    payload: data,
+    payload: countdownTime,
   };
 };
-export const timerEndTime = (data: number): ActionTypes => {
+export const timerEndTime = (timeMs: number): ActionTypes => {
   return {
     type: END_TIME,
-    payload: data,
+    payload: timeMs,
   };
 };
 export const timerStoppingTime = (
@@ -56,3 +65,10 @@ export const timerStatus = (timerStatus: ITimerStatus): ActionTypes => {
     payload: timerStatus,
   };
 };
+export const timerCompleted = (completed: Completed): ActionTypes => {
+  return {
+    type: TIMER_COMPLETED,
+    payload: completed,
+  };
+};
+
