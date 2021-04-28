@@ -29,7 +29,10 @@ const initialState: ITimerState = {
   timerCompleted: { completedType: null, isCompleted: false },
 };
 
-const timerReducer = (state = initialState, action: ActionTypes) => {
+const timerReducer = (
+  state = initialState,
+  action: ActionTypes
+): ITimerState => {
   switch (action.type) {
     case TIMER_STOPPED:
       return {

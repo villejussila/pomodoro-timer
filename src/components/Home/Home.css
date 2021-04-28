@@ -1,7 +1,7 @@
 .content {
   display: flex;
   align-items: center;
-  padding-top: 2rem;
+  margin-top: 2rem;
   color: #f0edee;
   min-height: 100vh;
   width: 90%;
@@ -10,21 +10,4 @@
   flex-direction: column;
   border-radius: 2px;
   overflow: hidden;
-}
-
-@-webkit-keyframes opacity-change {
-  0% {
-    opacity: 0.12;
-  }
-  100% {
-    opacity: 0.05;
-  }
-}
-@keyframes opacity-change {
-  0% {
-    opacity: 0.12;
-  }
-  100% {
-    opacity: 0.05;
-  }
 }

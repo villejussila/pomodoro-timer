@@ -6,8 +6,8 @@ import CompletedPomodoros from "./CompletedPomodoros";
 const Home = () => {
   return (
     <div className="content">
-      <Timer />
       <CompletedPomodoros />
+      <Timer />
     </div>
   );
 };

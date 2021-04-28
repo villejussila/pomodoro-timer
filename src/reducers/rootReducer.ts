@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
 import timerReducer from "./timerReducer";
-import pomodoroCountReducer from "./pomodoroCountReducer";
+import pomodoroCompletedReducer from "./pomodoroCompletedReducer";
 
 const rootReducer = combineReducers({
   timerReducer,
-  pomodoroCountReducer,
+  pomodoroCompletedReducer,
 });
 
 export default rootReducer;

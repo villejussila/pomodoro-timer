@@ -1,0 +1,16 @@
+.Circle {
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background-color: #00000000;
+  /* border: 2px solid var(--naples-yellow); */
+  border: 4px dotted #24242427;
+  position: absolute;
+  top: 200px;
+  user-select: none;
+  
+}
+.progress-ring {
+  margin-left: -4px;
+  margin-top: -4px;
+}

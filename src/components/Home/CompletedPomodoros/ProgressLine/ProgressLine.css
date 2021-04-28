@@ -1,0 +1,9 @@
+.progress-line {
+  width: 25%;
+  height: 4px;
+  background-color: #2424249a;
+  margin-left: 0.25vw;
+  margin-right: 0.25vw;
+  margin-top: 10px;
+  margin-bottom: 75px;
+}

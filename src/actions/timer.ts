@@ -6,11 +6,11 @@ export const TIMER_STOPPING_TIME = "TIMER_STOPPING_TIME";
 export const TIMER_STATUS = "TIMER_STATUS";
 export const TIMER_COMPLETED = "TIMER_COMPLETED";
 
-
 export enum ITimerStatus {
   Work = "WORK",
   ShortBreak = "SHORT_BREAK",
   LongBreak = "LONG_BREAK",
+  TEST = "TEST",
 }
 
 export type Completed = {
@@ -25,8 +25,7 @@ export type ActionTypes =
   | { type: typeof END_TIME; payload: number }
   | { type: typeof TIMER_STOPPING_TIME; payload: string | null }
   | { type: typeof TIMER_STATUS; payload: ITimerStatus }
-  | { type: typeof TIMER_COMPLETED; payload: Completed }
- 
+  | { type: typeof TIMER_COMPLETED; payload: Completed };
 
 export const timerStopped = (): ActionTypes => {
   return {
@@ -71,4 +70,3 @@ export const timerCompleted = (completed: Completed): ActionTypes => {
     payload: completed,
   };
 };
-
