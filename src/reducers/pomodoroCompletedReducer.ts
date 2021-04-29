@@ -1,19 +1,18 @@
 import {
   ActionTypes,
-  POMODORO_INDEX,
-  POMODORO_INDEX_INCREASE,
-  POMODORO_PROGRESSES,
+  POMODORO_COUNT_INCREASE,
   RESET_COMPLETED,
   UPDATE_PROGRESSES,
+  CYCLE_COMPLETED,
 } from "../actions/pomodoroCompleted";
 
 interface IPomodoroState {
-  pomodoroIndex: number;
+  pomodoroCount: number;
   progresses: number[];
   cycleCompleted: boolean;
 }
 const initialState: IPomodoroState = {
-  pomodoroIndex: 0,
+  pomodoroCount: 0,
   progresses: [0, 0, 0, 0],
   cycleCompleted: false,
 };
@@ -23,26 +22,23 @@ const pomodoroCompletedReducer = (
   action: ActionTypes
 ): IPomodoroState => {
   switch (action.type) {
-    case POMODORO_INDEX:
-      return {
-        ...state
-      }
-    case POMODORO_INDEX_INCREASE:
+    case POMODORO_COUNT_INCREASE:
       return {
         ...state,
-        pomodoroIndex: (state.pomodoroIndex + 1) % 4,
+        pomodoroCount: state.pomodoroCount + 1,
       };
     case RESET_COMPLETED:
       return initialState;
-    case POMODORO_PROGRESSES:
-      return {
-        ...state
-      }
 
     case UPDATE_PROGRESSES:
       return {
         ...state,
-        progresses: action.payload,
+        progresses: [...state.progresses, action.payload],
+      };
+    case CYCLE_COMPLETED:
+      return {
+        ...state,
+        cycleCompleted: action.payload,
       };
     default:
       return state;

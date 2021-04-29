@@ -1,6 +1,6 @@
 .Timer {
   width: 550px;
-  height: 700px;
+  height: 600px;
 }
 
 .timer-time {
@@ -17,6 +17,7 @@
 .work-or-break {
   font-size: 2rem;
   color: var(--isabelline);
+  text-align: center;
 }
 .timer-control-buttons {
   /* display: flex;
@@ -49,13 +50,14 @@ button:hover {
   color: #242424;
   transition: background-color 1s, color 0.5s ease-in-out;
 }
+
 .reset-button {
   color: var(--naples-yellow);
   width: 50px;
   height: 50px;
   z-index: 9999;
   position: relative;
-  top: -200px;
+  top: -100px;
   left: 222px;
 }
 .reset-button:hover {
@@ -69,7 +71,7 @@ button:hover {
   height: 50px;
   z-index: 9999;
   position: relative;
-  top: -200px;
+  top: -100px;
   left: 225px;
 }
 .time {
@@ -79,6 +81,7 @@ button:hover {
   text-shadow: 1px 3px 50px #e0e0e04b;
   z-index: 9999999;
   cursor: pointer;
+  user-select: none;
 }
 .stop-button:active {
   background-color: var(--china-pink);

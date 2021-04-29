@@ -3,10 +3,11 @@ export const TIMER_RUNNING = "TIMER_RUNNING";
 export const TIMER_TIME = "TIME";
 export const END_TIME = "END_TIME";
 export const TIMER_STOPPING_TIME = "TIMER_STOPPING_TIME";
-export const TIMER_STATUS = "TIMER_STATUS";
+export const TIMER_MODE = "TIMER_MODE";
 export const TIMER_COMPLETED = "TIMER_COMPLETED";
+export const TIMER_NEXT_MODE = "TIMER_NEXT_MODE"
 
-export enum ITimerStatus {
+export enum ITimerMode {
   Work = "WORK",
   ShortBreak = "SHORT_BREAK",
   LongBreak = "LONG_BREAK",
@@ -14,7 +15,7 @@ export enum ITimerStatus {
 }
 
 export type Completed = {
-  completedType: ITimerStatus | null;
+  completedMode: ITimerMode | null;
   isCompleted: boolean;
 };
 
@@ -24,7 +25,8 @@ export type ActionTypes =
   | { type: typeof TIMER_TIME; payload: string }
   | { type: typeof END_TIME; payload: number }
   | { type: typeof TIMER_STOPPING_TIME; payload: string | null }
-  | { type: typeof TIMER_STATUS; payload: ITimerStatus }
+  | { type: typeof TIMER_MODE; payload: ITimerMode }
+  | { type: typeof TIMER_NEXT_MODE;}
   | { type: typeof TIMER_COMPLETED; payload: Completed };
 
 export const timerStopped = (): ActionTypes => {
@@ -58,10 +60,10 @@ export const timerStoppingTime = (
   };
 };
 
-export const timerStatus = (timerStatus: ITimerStatus): ActionTypes => {
+export const timerMode = (timerMode: ITimerMode): ActionTypes => {
   return {
-    type: TIMER_STATUS,
-    payload: timerStatus,
+    type: TIMER_MODE,
+    payload: timerMode,
   };
 };
 export const timerCompleted = (completed: Completed): ActionTypes => {
@@ -70,3 +72,8 @@ export const timerCompleted = (completed: Completed): ActionTypes => {
     payload: completed,
   };
 };
+export const timerNextMode = () : ActionTypes => {
+  return {
+    type: TIMER_NEXT_MODE,
+  }
+}

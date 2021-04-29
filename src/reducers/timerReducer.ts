@@ -5,9 +5,10 @@ import {
   TIMER_TIME,
   END_TIME,
   TIMER_STOPPING_TIME,
-  TIMER_STATUS,
+  TIMER_MODE,
+  TIMER_NEXT_MODE,
   TIMER_COMPLETED,
-  ITimerStatus,
+  ITimerMode,
   ActionTypes,
   Completed,
 } from "../actions/timer";
@@ -17,7 +18,9 @@ interface ITimerState {
   time: string;
   endTime: number | null;
   stoppingTime: string | null;
-  timerStatus: ITimerStatus | null;
+  timerMode: ITimerMode | null;
+  timerModes: ITimerMode[];
+  timerNextModeIndex: number;
   timerCompleted: Completed;
 }
 const initialState: ITimerState = {
@@ -25,8 +28,19 @@ const initialState: ITimerState = {
   time: "25:00",
   endTime: null,
   stoppingTime: null,
-  timerStatus: null,
-  timerCompleted: { completedType: null, isCompleted: false },
+  timerMode: null,
+  timerModes: [
+    ITimerMode.Work,
+    ITimerMode.ShortBreak,
+    ITimerMode.Work,
+    ITimerMode.ShortBreak,
+    ITimerMode.Work,
+    ITimerMode.ShortBreak,
+    ITimerMode.Work,
+    ITimerMode.LongBreak,
+  ],
+  timerNextModeIndex: 1,
+  timerCompleted: { completedMode: null, isCompleted: false },
 };
 
 const timerReducer = (
@@ -59,10 +73,17 @@ const timerReducer = (
         ...state,
         stoppingTime: action.payload,
       };
-    case TIMER_STATUS:
+    case TIMER_MODE:
       return {
         ...state,
-        timerStatus: action.payload,
+        timerMode: action.payload,
+      };
+    case TIMER_NEXT_MODE:
+      return {
+        ...state,
+        timerMode: state.timerModes[state.timerNextModeIndex],
+        timerNextModeIndex: (state.timerNextModeIndex += 1) % 8,
+        // timerMode: ITimerMode.TEST,
       };
     case TIMER_COMPLETED:
       return {

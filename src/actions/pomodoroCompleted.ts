@@ -1,24 +1,17 @@
-export const POMODORO_INDEX_INCREASE = "POMODORO_INDEX_INCREASE";
+export const POMODORO_COUNT_INCREASE = "POMODORO_COUNT_INCREASE";
 export const RESET_COMPLETED = "RESET_COMPLETED";
-export const POMODORO_INDEX = "POMODORO_INDEX";
-export const POMODORO_PROGRESSES = "POMODORO_PROGRESSES";
 export const UPDATE_PROGRESSES = "UPDATE_PROGRESSES";
+export const CYCLE_COMPLETED = "CYCLE_COMPLETED";
 
 export type ActionTypes =
-  | { type: typeof POMODORO_INDEX_INCREASE }
+  | { type: typeof POMODORO_COUNT_INCREASE }
   | { type: typeof RESET_COMPLETED }
-  | { type: typeof POMODORO_INDEX }
-  | { type: typeof POMODORO_PROGRESSES }
-  | { type: typeof UPDATE_PROGRESSES; payload: number[] };
+  | { type: typeof UPDATE_PROGRESSES; payload: number }
+  | { type: typeof CYCLE_COMPLETED; payload: boolean };
 
-export const pomodoroIndex = (): ActionTypes => {
+export const pomodoroCountIncrease = (): ActionTypes => {
   return {
-    type: POMODORO_INDEX,
-  };
-};
-export const pomodoroIndexIncrease = (): ActionTypes => {
-  return {
-    type: POMODORO_INDEX_INCREASE,
+    type: POMODORO_COUNT_INCREASE,
   };
 };
 export const resetCompleted = (): ActionTypes => {
@@ -26,14 +19,15 @@ export const resetCompleted = (): ActionTypes => {
     type: RESET_COMPLETED,
   };
 };
-export const pomodoroProgresses = (): ActionTypes => {
-  return {
-    type: POMODORO_PROGRESSES,
-  };
-};
-export const updateProgresses = (progresses: number[]): ActionTypes => {
+export const updateProgresses = (progress: number): ActionTypes => {
   return {
     type: UPDATE_PROGRESSES,
-    payload: progresses,
+    payload: progress,
+  };
+};
+export const cycleCompleted = (isCompleted: boolean): ActionTypes => {
+  return {
+    type: CYCLE_COMPLETED,
+    payload: isCompleted,
   };
 };
