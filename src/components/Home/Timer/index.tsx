@@ -14,15 +14,10 @@ import {
   timerStoppingTime,
   timerMode,
   ITimerMode,
-  timerCompleted,
   timerNextMode,
 } from "../../../actions/timer";
-import {
-  cycleCompleted,
-  pomodoroCountIncrease,
-  resetCompleted,
-} from "../../../actions/pomodoroCompleted";
 import Circle from "./Circle";
+import { updateProgresses } from "../../../actions/pomodoroCompleted";
 
 interface ReturnTypeTimerStartTime {
   minutes: number;
@@ -31,11 +26,9 @@ interface ReturnTypeTimerStartTime {
 
 const Timer = () => {
   const timeRef = useRef<NodeJS.Timeout>();
-  const resetRef = useRef<NodeJS.Timeout>();
   const timer = useAppSelector((state) => state.timerReducer);
   const pomodoro = useAppSelector((state) => state.pomodoroCompletedReducer);
   const dispatch = useAppDispatch();
-  const [isMouseDown, setIsMouseDown] = useState(false);
 
   const determineTimerStartTime = useCallback(
     (timerWorkOrBreak: ITimerMode): ReturnTypeTimerStartTime => {
@@ -78,103 +71,19 @@ const Timer = () => {
     timeRef.current = setInterval(() => updateTimer(), 100);
   }, [timer.endTime, timer.timerMode, timer.isStopped, dispatch]);
 
-  //Handles stopping timer and setting completed mode
+  //Handles stopping timer and setting next mode
   useEffect(() => {
     if (timer.isStopped && timer.time === "00:00") {
-      // dispatch(
-      //   timerCompleted({
-      //     completedMode: timer.timerMode,
-      //     isCompleted: true,
-      //   })
-      // );
       dispatch(timerNextMode());
       dispatch(timerStoppingTime(null));
     }
   }, [timer.isStopped, timer.time, dispatch]);
+  //Logging
+  useEffect(() => {
+    console.log(`timer.timerMode`, timer.timerMode);
+  }, [timer.timerMode]);
 
-  // useEffect(() => {
-  //   dispatch(timerStoppingTime(null));
-  //   if (timer.timerCompleted.completedMode === ITimerMode.Work) {
-  //     dispatch(pomodoroCountIncrease());
-  //     console.log("increased");
-  //   }
-  // }, [timer.timerCompleted, dispatch]);
-
-  // useEffect(() => {
-  //   if (pomodoro.pomodoroCount === 4) {
-  //     dispatch(cycleCompleted(true));
-  //     console.log("CYCLE COMPLETED");
-  //     //TODO: tell user cycle is completed before reseting         <-----------------------
-  //   }
-  // }, [pomodoro.pomodoroCount, dispatch]);
-
-  //Sets timer to Work, short break or long break mode
-
-  // useEffect(() => {
-  //   if (timer.timerCompleted.completedMode === ITimerMode.Work) {
-  //     if (pomodoro.cycleCompleted) {
-  //       dispatch(timerMode(ITimerMode.LongBreak));
-  //       return;
-  //     }
-  //     dispatch(timerMode(ITimerMode.ShortBreak));
-  //     return;
-  //   }
-  //   if (timer.timerCompleted.completedMode === ITimerMode.ShortBreak) {
-  //     console.log(
-  //       `timer.timerCompleted.isCompleted`,
-  //       timer.timerCompleted.isCompleted
-  //     );
-  //     if (!timer.timerCompleted.isCompleted) return;
-  //     console.log("shortbreak");
-  //     dispatch(timerMode(ITimerMode.Work));
-  //     dispatch(
-  //       timerCompleted({
-  //         isCompleted: false,
-  //         completedMode: ITimerMode.ShortBreak,
-  //       })
-  //     );
-  //     dispatch(timerStopped());
-  //     if (timeRef.current) {
-  //       clearInterval(timeRef.current);
-  //     }
-  //     return;
-  //   }
-  //   if (timer.timerCompleted.completedMode === ITimerMode.LongBreak) {
-  //     console.log(
-  //       `timer.timerCompleted.isCompleted`,
-  //       timer.timerCompleted.isCompleted
-  //     );
-  //     if (!timer.timerCompleted.isCompleted) return;
-  //     console.log("longbreak");
-  //     dispatch(timerMode(ITimerMode.Work));
-  //     dispatch(
-  //       timerCompleted({
-  //         isCompleted: false,
-  //         completedMode: ITimerMode.LongBreak,
-  //       })
-  //     );
-  //     dispatch(timerStopped());
-  //     if (timeRef.current) {
-  //       clearInterval(timeRef.current);
-  //     }
-  //     return;
-  //   }
-  // }, [timer.timerCompleted, pomodoro.cycleCompleted, dispatch]);
-
-  //Reset the whole timer when 4 pomodoros
-  // useEffect(() => {
-  //   if (!timer.timerMode) return;
-  //   if (
-  //     timer.timerMode === ITimerMode.LongBreak &&
-  //     timer.timerCompleted.completedMode === ITimerMode.LongBreak
-  //   ) {
-  //     console.log("reset");
-  //     //TODO: tell user cycle is completed before reseting         <-----------------------
-  //     dispatch(resetCompleted());
-  //   }
-  // }, [timer.timerMode, timer.timerCompleted.completedMode, dispatch]);
-
-  function handleClickStart(timerWorkOrBreak: ITimerMode) {
+  function handleClickTimer(timerWorkOrBreak: ITimerMode) {
     if (timer.stoppingTime && timer.isStopped) {
       continueTimer(timer.stoppingTime, timerWorkOrBreak);
       return;
@@ -188,16 +97,13 @@ const Timer = () => {
     }
   }
 
-  useEffect(() => {
-    console.log(`timer.timerMode`, timer.timerMode);
-  }, [timer.timerMode]);
-
   function startTimer(timerWorkOrBreak: ITimerMode) {
     const time = determineTimerStartTime(timerWorkOrBreak);
     dispatch(timerEndTime(getEndTimeInMs(time.minutes)));
     dispatch(timerRunning());
     dispatch(timerMode(timerWorkOrBreak));
   }
+
   function stopTimer() {
     dispatch(timerStopped());
     if (timeRef.current) {
@@ -218,6 +124,7 @@ const Timer = () => {
     dispatch(timerRunning());
     dispatch(timerMode(timerWorkOrBreak));
   }
+
   function handleResetTimer() {
     console.log("reset");
     dispatch(timerStopped());
@@ -230,21 +137,30 @@ const Timer = () => {
       dispatch(timerTime(time));
     }
   }
+
   function handleSkip() {
-    dispatch(
-      timerCompleted({
-        completedMode: timer.timerMode,
-        isCompleted: true,
-      })
-    );
     dispatch(timerStopped());
     if (timeRef.current) {
       clearInterval(timeRef.current);
     }
     dispatch(timerStoppingTime(null));
-    // dispatch(timerMode(ITimerMode.ShortBreak));
     dispatch(timerNextMode());
+    completePomodoroOnSkip();
   }
+
+  function completePomodoroOnSkip() {
+    if (timer.timerNextModeIndex === 0) {
+      dispatch(updateProgresses([0, 0, 0, 0]));
+      return;
+    }
+    let updatedPomodoroProgresses: number[] = [];
+    pomodoro.progresses.forEach((val) => {
+      if (val === 0 || val === 100) updatedPomodoroProgresses.push(val);
+      else updatedPomodoroProgresses.push(100);
+    });
+    dispatch(updateProgresses(updatedPomodoroProgresses));
+  }
+
   function showWorkOrBreak() {
     switch (timer.timerMode) {
       case "WORK":
@@ -255,6 +171,7 @@ const Timer = () => {
         return "Four pomodoros completed, time for a longer break!";
     }
   }
+
   function showCorrectTextOnTimer() {
     if (!timer.timerMode) return "START";
     switch (timer.timerMode) {
@@ -271,28 +188,27 @@ const Timer = () => {
 
   // DEBUG-----------------------------------------------------------------
   useEffect(() => {
-    console.log(`timer.timerCurrentModeIndex`, timer.timerNextModeIndex);
+    console.log(`timer.timerNextModeIndex`, timer.timerNextModeIndex);
   }, [timer.timerNextModeIndex]);
   // DEBUG----------------------------------------------------------------
   return (
     <div className="Timer">
       <div
         className="timer-time"
-        onClick={() => handleClickStart(timer.timerMode || ITimerMode.Work)}
-        // onClick={() => handleClickStart(ITimerMode.ShortBreak)}
-        onMouseDown={() => setIsMouseDown(true)}
-        onMouseUp={() => setIsMouseDown(false)}
+        onClick={() => handleClickTimer(timer.timerMode || ITimerMode.Work)}
       >
         <div className="time">
-          {timer.isStopped ? showCorrectTextOnTimer() : timer.time}
+          {timer.isStopped && !timer.stoppingTime
+            ? showCorrectTextOnTimer()
+            : timer.time}
         </div>
       </div>
-      {/* <button className="start-button">Start</button>
-        <button className="stop-button">Stop</button> */}
-
       <Circle />
       {timer.timerMode ? (
         <>
+          {/* <div className="paused">
+            <i className="fas fa-pause"></i>
+          </div> */}
           <button className="reset-button" onClick={() => handleResetTimer()}>
             <i className="fas fa-redo"></i>
           </button>
@@ -301,8 +217,9 @@ const Timer = () => {
           </button>
         </>
       ) : null}
-      <button onClick={() => dispatch(timerNextMode())}>Next timer mode</button>
-      <div className="work-or-break">{showWorkOrBreak()}</div>
+
+      {/* <button onClick={() => dispatch(timerNextMode())}>Next timer mode</button> */}
+      {/* <div className="work-or-break">{showWorkOrBreak()}</div> */}
     </div>
   );
 };

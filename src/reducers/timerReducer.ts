@@ -7,10 +7,8 @@ import {
   TIMER_STOPPING_TIME,
   TIMER_MODE,
   TIMER_NEXT_MODE,
-  TIMER_COMPLETED,
   ITimerMode,
   ActionTypes,
-  Completed,
 } from "../actions/timer";
 
 interface ITimerState {
@@ -20,8 +18,8 @@ interface ITimerState {
   stoppingTime: string | null;
   timerMode: ITimerMode | null;
   timerModes: ITimerMode[];
+  timerCurrentModeIndex: number;
   timerNextModeIndex: number;
-  timerCompleted: Completed;
 }
 const initialState: ITimerState = {
   isStopped: true,
@@ -39,8 +37,8 @@ const initialState: ITimerState = {
     ITimerMode.Work,
     ITimerMode.LongBreak,
   ],
+  timerCurrentModeIndex: 0,
   timerNextModeIndex: 1,
-  timerCompleted: { completedMode: null, isCompleted: false },
 };
 
 const timerReducer = (
@@ -82,13 +80,9 @@ const timerReducer = (
       return {
         ...state,
         timerMode: state.timerModes[state.timerNextModeIndex],
+        timerCurrentModeIndex: state.timerNextModeIndex,
         timerNextModeIndex: (state.timerNextModeIndex += 1) % 8,
         // timerMode: ITimerMode.TEST,
-      };
-    case TIMER_COMPLETED:
-      return {
-        ...state,
-        timerCompleted: action.payload,
       };
     default:
       return state;

@@ -1,6 +1,6 @@
 import {
   ActionTypes,
-  POMODORO_COUNT_INCREASE,
+  POMODORO_COUNT,
   RESET_COMPLETED,
   UPDATE_PROGRESSES,
   CYCLE_COMPLETED,
@@ -22,10 +22,10 @@ const pomodoroCompletedReducer = (
   action: ActionTypes
 ): IPomodoroState => {
   switch (action.type) {
-    case POMODORO_COUNT_INCREASE:
+    case POMODORO_COUNT:
       return {
         ...state,
-        pomodoroCount: state.pomodoroCount + 1,
+        pomodoroCount: action.payload
       };
     case RESET_COMPLETED:
       return initialState;
@@ -33,7 +33,7 @@ const pomodoroCompletedReducer = (
     case UPDATE_PROGRESSES:
       return {
         ...state,
-        progresses: [...state.progresses, action.payload],
+        progresses: action.payload,
       };
     case CYCLE_COMPLETED:
       return {
