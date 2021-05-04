@@ -1,6 +1,12 @@
 .App {
-  width: 100vw;
+  min-width: 100vw;
   height: 100vh;
   background-color: #242424fd;
   overflow: hidden;
+}
+
+@media only screen and (max-height: 760px) {
+  .App {
+    min-height: 200vh;
+  }
 }

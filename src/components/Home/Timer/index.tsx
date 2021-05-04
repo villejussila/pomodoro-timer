@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "../../App/hooks";
 import {
   getCountingDownMinutesAndSeconds,
   convertStringTimeToNumberFormat,
   getEndTimeInMs,
-} from "../../../utils";
+} from "../../../lib/utils";
 import "./Timer.css";
 import {
   timerStopped,
@@ -15,9 +15,15 @@ import {
   timerMode,
   ITimerMode,
   timerNextMode,
+  timerInitRequest,
 } from "../../../actions/timer";
 import Circle from "./Circle";
-import { updateProgresses } from "../../../actions/pomodoroCompleted";
+import {
+  updateProgresses,
+  resetCompletedPomodoros,
+} from "../../../actions/pomodoroCompleted";
+// @ts-ignore
+import alarm from "../../../sounds/alarm.wav";
 
 interface ReturnTypeTimerStartTime {
   minutes: number;
@@ -27,6 +33,7 @@ interface ReturnTypeTimerStartTime {
 const Timer = () => {
   const timeRef = useRef<NodeJS.Timeout>();
   const timer = useAppSelector((state) => state.timerReducer);
+  const alarmSound = new Audio(alarm);
   const pomodoro = useAppSelector((state) => state.pomodoroCompletedReducer);
   const dispatch = useAppDispatch();
 
@@ -48,6 +55,10 @@ const Timer = () => {
     []
   );
 
+  //FIX: completed progress lines are really annoying on wider screen because it doesn't fill up entirely
+  //TODO: add volume control to settings and add settings
+  //TODO: make responsive
+
   //Updating timer
   useEffect(() => {
     function updateTimer() {
@@ -66,18 +77,36 @@ const Timer = () => {
         timeRef.current && clearInterval(timeRef.current);
         dispatch(timerTime("00:00"));
         dispatch(timerStopped());
+        alarmSound.volume = 0.75;
+        alarmSound.play();
       }
     }
     timeRef.current = setInterval(() => updateTimer(), 100);
+    // eslint-disable-next-line
   }, [timer.endTime, timer.timerMode, timer.isStopped, dispatch]);
 
-  //Handles stopping timer and setting next mode
+  //Handle stopping timer and setting next mode
   useEffect(() => {
     if (timer.isStopped && timer.time === "00:00") {
       dispatch(timerNextMode());
+      //FIX: on page refresh this sets timer on next mode (because ls has values isStopped true and timer.time = 00:00)
+      //EDIT: FIXED but now UI needs to get correct info to show the progress circle
       dispatch(timerStoppingTime(null));
+      dispatch(timerTime("25:00"));
     }
   }, [timer.isStopped, timer.time, dispatch]);
+
+  // initialize
+  useEffect(() => {
+    if (!timer.timerInit) return;
+    dispatch(timerStopped());
+    timeRef.current && clearInterval(timeRef.current);
+    dispatch(timerStoppingTime(null));
+    dispatch(timerInitRequest(false));
+    dispatch(resetCompletedPomodoros());
+    dispatch(timerMode(null));
+  }, [timer.timerInit, dispatch]);
+
   //Logging
   useEffect(() => {
     console.log(`timer.timerMode`, timer.timerMode);
@@ -161,17 +190,6 @@ const Timer = () => {
     dispatch(updateProgresses(updatedPomodoroProgresses));
   }
 
-  function showWorkOrBreak() {
-    switch (timer.timerMode) {
-      case "WORK":
-        return "Working mode";
-      case "SHORT_BREAK":
-        return "Time for a short break";
-      case "LONG_BREAK":
-        return "Four pomodoros completed, time for a longer break!";
-    }
-  }
-
   function showCorrectTextOnTimer() {
     if (!timer.timerMode) return "START";
     switch (timer.timerMode) {
@@ -185,7 +203,6 @@ const Timer = () => {
         return "START";
     }
   }
-
   // DEBUG-----------------------------------------------------------------
   useEffect(() => {
     console.log(`timer.timerNextModeIndex`, timer.timerNextModeIndex);
@@ -203,9 +220,9 @@ const Timer = () => {
             : timer.time}
         </div>
       </div>
-      <Circle />
       {timer.timerMode ? (
         <>
+        <Circle />
           {/* <div className="paused">
             <i className="fas fa-pause"></i>
           </div> */}
@@ -217,7 +234,6 @@ const Timer = () => {
           </button>
         </>
       ) : null}
-
       {/* <button onClick={() => dispatch(timerNextMode())}>Next timer mode</button> */}
       {/* <div className="work-or-break">{showWorkOrBreak()}</div> */}
     </div>

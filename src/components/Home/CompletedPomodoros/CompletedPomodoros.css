@@ -1,6 +1,8 @@
 .total-progress {
   display: flex;
-  justify-content: space-evenly;
   flex-direction: row;
-  width: inherit;
+  justify-content: center;
+  width: 100%;
+  margin-left: 10vw;
+  margin-right: 10vw;
 }

@@ -1,10 +1,3 @@
-// Conversions
-export function minutesToMilliseconds(minutes: number) {
-  return minutes * 1000 * 60;
-}
-/* 
- -------------------
-*/
 // Types
 type Milliseconds = number;
 
@@ -13,6 +6,9 @@ interface CountingDownMinutesAndSeconds {
   seconds: number;
   minutesPadded: string;
   secondsPadded: string;
+}
+export function minutesToMilliseconds(minutes: number) {
+  return minutes * 1000 * 60;
 }
 export function getCountingDownMinutesAndSeconds(
   targetTime: number

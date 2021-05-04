@@ -1,8 +1,8 @@
 import "./CompletedPomodoros.css";
 import ProgressLine from "./ProgressLine";
 import { useAppSelector, useAppDispatch } from "../../App/hooks";
-import React, { useCallback, useEffect, useState } from "react";
-import { convertStringTimeToNumberFormat } from "../../../utils";
+import React, { useCallback, useEffect } from "react";
+import { convertStringTimeToNumberFormat } from "../../../lib/utils";
 import {
   cycleCompleted,
   pomodoroCount,
@@ -50,9 +50,7 @@ const CompletedPomodoros = () => {
     timer.time,
     timer.timerMode,
     timer.timerCurrentModeIndex,
-    pomodoro.cycleCompleted,
     timer.isStopped,
-    timer.stoppingTime,
     getUpdatedProgressArray,
     dispatch,
   ]);

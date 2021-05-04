@@ -8,9 +8,46 @@
   position: absolute;
   top: 200px;
   user-select: none;
-  
 }
 .progress-ring {
   margin-left: -4px;
   margin-top: -4px;
 }
+
+@media only screen and (max-width: 680px) {
+  .Circle {
+    width: 248px;
+    height: 248px;
+    top: 200px;
+    position: absolute;
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+  }
+  .progress-ring {
+    width: 248px;
+    height: 248px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* @media only screen and (orientation: landscape) and (max-device-height: 760px) {
+  .Circle {
+    width: 250px;
+    height: 250px;
+    top: 125px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .progress-ring {
+    width: 248px;
+    height: 248px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+} */

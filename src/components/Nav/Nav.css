@@ -16,6 +16,7 @@ ul {
   text-decoration: none;
   list-style-type: none;
   justify-content: space-between;
+  align-items: center;
   width: 90%;
   max-width: 1200px;
 }
@@ -26,4 +27,35 @@ ul li {
   font-size: 1.2rem;
   cursor: pointer;
   user-select: none;
+}
+.settings-button {
+  width: 3rem;
+  height: 3rem;
+}
+.refresh-button {
+  width: 3rem;
+  height: 3rem;
+  margin-right: 20px;
+}
+@media only screen and (max-width: 680px) {
+  .settings-button,
+  .refresh-button {
+    font-size: 1.25rem;
+    width: 30px;
+    height: 30px;
+  }
+  ul li {
+    font-size: 1rem;
+  }
+}
+@media only screen and (orientation: landscape) and (max-device-width: 680px) and (min-device-width: 280px) {
+  .settings-button,
+  .refresh-button {
+    font-size: 1.25rem;
+    width: 30px;
+    height: 30px;
+  }
+  ul li {
+    font-size: 1rem;
+  }
 }

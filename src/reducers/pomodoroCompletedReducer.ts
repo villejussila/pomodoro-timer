@@ -1,12 +1,12 @@
 import {
   ActionTypes,
   POMODORO_COUNT,
-  RESET_COMPLETED,
+  RESET_COMPLETED_POMODOROS,
   UPDATE_PROGRESSES,
   CYCLE_COMPLETED,
 } from "../actions/pomodoroCompleted";
 
-interface IPomodoroState {
+export interface IPomodoroState {
   pomodoroCount: number;
   progresses: number[];
   cycleCompleted: boolean;
@@ -25,9 +25,9 @@ const pomodoroCompletedReducer = (
     case POMODORO_COUNT:
       return {
         ...state,
-        pomodoroCount: action.payload
+        pomodoroCount: action.payload,
       };
-    case RESET_COMPLETED:
+    case RESET_COMPLETED_POMODOROS:
       return initialState;
 
     case UPDATE_PROGRESSES:

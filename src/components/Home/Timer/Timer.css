@@ -104,7 +104,43 @@ button:hover {
   top: -450px;
   left: 258px;
 }
-
+@media only screen and (max-width: 680px) {
+  .Timer {
+    width: 248px;
+    height: 248px;
+  }
+  .timer-time {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 248px;
+    height: 248px;
+  }
+  .time {
+    font-size: 4rem;
+  }
+  .skip-button,
+  .reset-button {
+    font-size: 1.25rem;
+    width: 30px;
+    height: 30px;
+    top: -70px;
+  }
+  .skip-button {
+    left: 105px;
+  }
+  .reset-button {
+    left: 90px;
+  }
+}
+/* @media only screen and (orientation: landscape) and (max-device-width: 680px) and (min-device-width: 280px) {
+  .timer-time {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+} */
 /* .reset {
   animation: reset 3s linear;
 }

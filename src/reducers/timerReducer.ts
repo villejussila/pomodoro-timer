@@ -9,9 +9,10 @@ import {
   TIMER_NEXT_MODE,
   ITimerMode,
   ActionTypes,
+  TIMER_INIT_REQUEST,
 } from "../actions/timer";
 
-interface ITimerState {
+export interface ITimerState {
   isStopped: boolean;
   time: string;
   endTime: number | null;
@@ -20,6 +21,7 @@ interface ITimerState {
   timerModes: ITimerMode[];
   timerCurrentModeIndex: number;
   timerNextModeIndex: number;
+  timerInit: boolean | null;
 }
 const initialState: ITimerState = {
   isStopped: true,
@@ -39,6 +41,7 @@ const initialState: ITimerState = {
   ],
   timerCurrentModeIndex: 0,
   timerNextModeIndex: 1,
+  timerInit: null,
 };
 
 const timerReducer = (
@@ -83,6 +86,13 @@ const timerReducer = (
         timerCurrentModeIndex: state.timerNextModeIndex,
         timerNextModeIndex: (state.timerNextModeIndex += 1) % 8,
         // timerMode: ITimerMode.TEST,
+      };
+    case TIMER_INIT_REQUEST:
+      return {
+        ...state,
+        timerInit: action.payload,
+        timerCurrentModeIndex: 0,
+        timerNextModeIndex: 1,
       };
     default:
       return state;
