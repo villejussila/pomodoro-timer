@@ -1,5 +1,5 @@
 import ReactTooltip from "react-tooltip";
-
+import Settings from "./Settings";
 import { useAppDispatch } from "../App/hooks";
 import { timerInitRequest } from "../../actions/timer";
 
@@ -22,16 +22,10 @@ const Nav = () => {
             onClick={() => handleClickRefresh()}
             className="refresh-button"
           >
-            <ReactTooltip />
             <i className="fas fa-sync-alt"></i>
+            <ReactTooltip />
           </button>
-          <button
-            data-tip="Settings"
-            data-delay-show="1000"
-            className="settings-button"
-          >
-            <i className="fas fa-cog"></i>
-          </button>
+          <Settings />
         </li>
       </ul>
     </nav>

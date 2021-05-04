@@ -55,9 +55,7 @@ const Timer = () => {
     []
   );
 
-  //FIX: completed progress lines are really annoying on wider screen because it doesn't fill up entirely
   //TODO: add volume control to settings and add settings
-  //TODO: make responsive
 
   //Updating timer
   useEffect(() => {
@@ -222,7 +220,7 @@ const Timer = () => {
       </div>
       {timer.timerMode ? (
         <>
-        <Circle />
+          <Circle />
           {/* <div className="paused">
             <i className="fas fa-pause"></i>
           </div> */}

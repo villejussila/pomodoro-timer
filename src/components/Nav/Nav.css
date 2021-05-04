@@ -37,6 +37,7 @@ ul li {
   height: 3rem;
   margin-right: 20px;
 }
+
 @media only screen and (max-width: 680px) {
   .settings-button,
   .refresh-button {
