@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../App/hooks";
 import {
   getCountingDownMinutesAndSeconds,
@@ -35,7 +35,9 @@ const Timer = () => {
   const timer = useAppSelector((state) => state.timerReducer);
   const alarmSound = new Audio(alarm);
   const pomodoro = useAppSelector((state) => state.pomodoroCompletedReducer);
+  const settings = useAppSelector((state) => state.settingsReducer);
   const dispatch = useAppDispatch();
+  const [clickedTime, setClickedTime] = useState<boolean | null>();
 
   const determineTimerStartTime = useCallback(
     (timerWorkOrBreak: ITimerMode): ReturnTypeTimerStartTime => {
@@ -54,8 +56,8 @@ const Timer = () => {
     },
     []
   );
-
-  //TODO: add volume control to settings and add settings
+  //TODO: alarm doesn't sound if timer is running and then page refreshed, because of browser rules.
+  //    Add "CONTINUE || START" buttons interaction on refresh if LS empty
 
   //Updating timer
   useEffect(() => {
@@ -75,7 +77,7 @@ const Timer = () => {
         timeRef.current && clearInterval(timeRef.current);
         dispatch(timerTime("00:00"));
         dispatch(timerStopped());
-        alarmSound.volume = 0.75;
+        alarmSound.volume = settings.volume;
         alarmSound.play();
       }
     }
@@ -87,12 +89,17 @@ const Timer = () => {
   useEffect(() => {
     if (timer.isStopped && timer.time === "00:00") {
       dispatch(timerNextMode());
-      //FIX: on page refresh this sets timer on next mode (because ls has values isStopped true and timer.time = 00:00)
-      //EDIT: FIXED but now UI needs to get correct info to show the progress circle
       dispatch(timerStoppingTime(null));
       dispatch(timerTime("25:00"));
     }
   }, [timer.isStopped, timer.time, dispatch]);
+
+  useEffect(() => {
+    if (timer.stoppingTime && timer.isStopped) {
+      setClickedTime(false);
+    }
+    return () => setClickedTime(true);
+  }, [timer.stoppingTime, timer.isStopped]);
 
   // initialize
   useEffect(() => {
@@ -212,7 +219,7 @@ const Timer = () => {
         className="timer-time"
         onClick={() => handleClickTimer(timer.timerMode || ITimerMode.Work)}
       >
-        <div className="time">
+        <div className={clickedTime ? "time continue" : "time paused"}>
           {timer.isStopped && !timer.stoppingTime
             ? showCorrectTextOnTimer()
             : timer.time}

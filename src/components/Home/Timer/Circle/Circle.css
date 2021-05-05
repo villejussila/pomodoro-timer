@@ -3,7 +3,6 @@
   height: 550px;
   border-radius: 50%;
   background-color: #00000000;
-  /* border: 2px solid var(--naples-yellow); */
   border: 4px dotted #24242427;
   position: absolute;
   top: 200px;
@@ -20,7 +19,6 @@
     height: 248px;
     top: 200px;
     position: absolute;
-    /* display: flex; */
     justify-content: center;
     align-items: center;
   }
@@ -32,22 +30,3 @@
     align-items: center;
   }
 }
-
-/* @media only screen and (orientation: landscape) and (max-device-height: 760px) {
-  .Circle {
-    width: 250px;
-    height: 250px;
-    top: 125px;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .progress-ring {
-    width: 248px;
-    height: 248px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-} */

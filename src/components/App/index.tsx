@@ -6,9 +6,14 @@ import { useAppSelector } from "./hooks";
 
 function App() {
   const { isStopped } = useAppSelector((state) => state.timerReducer);
+  const { staticBackground } = useAppSelector((state) => state.settingsReducer);
 
   return (
-    <div className={isStopped ? "App" : "App color-change-2x"}>
+    <div
+      className={
+        !isStopped && !staticBackground ? "App color-change-2x" : "App"
+      }
+    >
       <Nav />
       <Home />
     </div>

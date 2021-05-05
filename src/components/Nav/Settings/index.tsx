@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import ReactTooltip from "react-tooltip";
-
 import Modal from "react-modal";
+import { useAppSelector, useAppDispatch } from "../../App/hooks";
+import {
+  isStaticBackground,
+  setVolume,
+  setShortBreakDuration,
+  setLongBreakDuration,
+} from "../../../actions/settings";
 import "./Settings.css";
-
+// @ts-ignore
+import alarm from "../../../sounds/alarm.wav";
 Modal.setAppElement("#root");
 
 const customStyles: Modal.Styles = {
@@ -24,16 +31,19 @@ const customStyles: Modal.Styles = {
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
     backgroundColor: "#242424",
-    color: "white",
+    color: "var(--gainsboro)",
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
     flexDirection: "column",
   },
 };
+const alarmSound = new Audio(alarm);
+
 const Settings = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
+  const dispatch = useAppDispatch();
+  const settings = useAppSelector((state) => state.settingsReducer);
   function openModal() {
     setModalIsOpen(true);
   }
@@ -41,9 +51,32 @@ const Settings = () => {
     setModalIsOpen(false);
   }
   function handleChangeVolume(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log(e.target.value);
+    dispatch(setVolume(Number(e.target.value) / 100));
   }
-
+  function handleClickUseStaticBackground(
+    e: React.ChangeEvent<HTMLInputElement>
+  ) {
+    if (e.target.checked === true) {
+      dispatch(isStaticBackground(true));
+      return;
+    }
+    dispatch(isStaticBackground(false));
+  }
+  function handleClickTestVolume(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    alarmSound.volume = settings.volume;
+    alarmSound.play();
+  }
+  function handleChangeShortBreakDuration(
+    e: React.ChangeEvent<HTMLInputElement>
+  ) {
+    dispatch(setShortBreakDuration(Number(e.target.value)));
+  }
+  function handleChangeLongBreakDuration(
+    e: React.ChangeEvent<HTMLInputElement>
+  ) {
+    dispatch(setLongBreakDuration(Number(e.target.value)));
+  }
   return (
     <>
       <button
@@ -68,23 +101,59 @@ const Settings = () => {
         </div>
         <form className="settings-form">
           <label htmlFor="volume">Alarm volume</label>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            name="volume"
-            defaultValue="75"
-            className="volume-slider"
-            onChange={(e) => handleChangeVolume(e)}
-          />
-          <label htmlFor="enable-static-background">
-            Use static background when timer is running
-          </label>
-          <input
-            type="checkbox"
-            name="enable-static-background"
-            className="enable-static-bg-checkbox"
-          />
+          <div className="volume-wrapper">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              name="volume"
+              value={settings.volume * 100}
+              className="volume-slider"
+              onChange={(e) => handleChangeVolume(e)}
+            />
+            <button
+              className="test-volume-button"
+              onClick={(e) => handleClickTestVolume(e)}
+            >
+              <i className="fas fa-play"></i>
+            </button>
+          </div>
+          <div className="options-wrapper">
+            <label htmlFor="short-break-time">Short break time (minutes)</label>
+            <input
+              type="number"
+              name="short-break-time"
+              min="1"
+              max="15"
+              value={settings.shortBreakDuration}
+              onChange={(e) => handleChangeShortBreakDuration(e)}
+              className="short-break-time-input"
+            />
+          </div>
+          <div className="options-wrapper">
+            <label htmlFor="long-break-time">Long break time (minutes)</label>
+            <input
+              type="number"
+              name="long-break-time"
+              min="1"
+              max="60"
+              value={settings.longBreakDuration}
+              onChange={(e) => handleChangeLongBreakDuration(e)}
+              className="long-break-time-input"
+            />
+          </div>
+          <div className="options-wrapper">
+            <label htmlFor="enable-static-background">
+              Use static background when timer is running
+            </label>
+            <input
+              type="checkbox"
+              name="enable-static-background"
+              className="enable-static-bg-checkbox"
+              checked={settings.staticBackground}
+              onChange={(e) => handleClickUseStaticBackground(e)}
+            />
+          </div>
         </form>
       </Modal>
     </>

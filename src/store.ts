@@ -18,6 +18,7 @@ store.subscribe(
     saveState({
       timerReducer: store.getState().timerReducer,
       pomodoroCompletedReducer: store.getState().pomodoroCompletedReducer,
+      settingsReducer: store.getState().settingsReducer,
     });
   }, 1000)
 );

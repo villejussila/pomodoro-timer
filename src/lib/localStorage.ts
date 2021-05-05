@@ -1,5 +1,6 @@
 import { ITimerState } from "../reducers/timerReducer";
 import { IPomodoroState } from "../reducers/pomodoroCompletedReducer";
+import { ISettingsState } from "../reducers/settingsReducer";
 export const loadState = () => {
   try {
     const serializedState = localStorage.getItem("timer");
@@ -11,7 +12,8 @@ export const loadState = () => {
 };
 type LocalStorageStateTypes =
   | { timerReducer: ITimerState }
-  | { pomodoroCompletedReducer: IPomodoroState };
+  | { pomodoroCompletedReducer: IPomodoroState }
+  | { settingsReducer: ISettingsState };
 export const saveState = (state: LocalStorageStateTypes) => {
   try {
     const serializedState = JSON.stringify(state);

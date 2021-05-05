@@ -5,14 +5,8 @@
   color: #f0edee;
   min-height: 90vh;
   width: 90%;
-  /* background-color: #e0e0e017; */
   margin: 1rem auto;
   flex-direction: column;
   border-radius: 2px;
   overflow: hidden;
 }
-/* @media only screen and (max-height: 760px) {
-  .content {
-    overflow-y: auto;
-  }
-} */
