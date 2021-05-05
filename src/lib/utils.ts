@@ -35,3 +35,8 @@ export function getEndTimeInMs(minutes: number): Milliseconds {
   const endTimeInMs = startTimeInMs + minutesToMilliseconds(minutes);
   return endTimeInMs;
 }
+export function convertMinutesToStringTimeFormat(minutes: number): string {
+  minutes.toString().padStart(2, "0");
+  let seconds = ":00";
+  return minutes + seconds;
+}

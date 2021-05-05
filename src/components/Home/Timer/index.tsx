@@ -3,6 +3,7 @@ import { useAppSelector, useAppDispatch } from "../../App/hooks";
 import {
   getCountingDownMinutesAndSeconds,
   convertStringTimeToNumberFormat,
+  convertMinutesToStringTimeFormat,
   getEndTimeInMs,
 } from "../../../lib/utils";
 import "./Timer.css";
@@ -43,18 +44,24 @@ const Timer = () => {
     (timerWorkOrBreak: ITimerMode): ReturnTypeTimerStartTime => {
       switch (timerWorkOrBreak) {
         case ITimerMode.Work:
-          return { minutes: 0.333333, time: "00:20" };
+          return { minutes: 25, time: "25:00" };
         case ITimerMode.ShortBreak:
-          return { minutes: 0.1, time: "00:06" };
+          return {
+            minutes: settings.shortBreakDuration,
+            time: convertMinutesToStringTimeFormat(settings.shortBreakDuration),
+          };
         case ITimerMode.LongBreak:
-          return { minutes: 0.25, time: "00:25" };
+          return {
+            minutes: settings.longBreakDuration,
+            time: convertMinutesToStringTimeFormat(settings.longBreakDuration),
+          };
         case ITimerMode.TEST:
-          return { minutes: 1, time: "01:00" };
+          return { minutes: 0.1, time: "00:06" };
         default:
           return { minutes: 25, time: "25:00" };
       }
     },
-    []
+    [settings.shortBreakDuration, settings.longBreakDuration]
   );
   //TODO: alarm doesn't sound if timer is running and then page refreshed, because of browser rules.
   //    Add "CONTINUE || START" buttons interaction on refresh if LS empty
