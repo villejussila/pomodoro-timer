@@ -25,14 +25,15 @@ ul li {
   margin: 5px;
   color: #f0edee;
   font-size: 1.2rem;
-  cursor: pointer;
   user-select: none;
 }
 .settings-button {
+  cursor: pointer;
   width: 3rem;
   height: 3rem;
 }
 .refresh-button {
+  cursor: pointer;
   width: 3rem;
   height: 3rem;
   margin-right: 20px;

@@ -24,7 +24,7 @@ const customStyles: Modal.Styles = {
     zIndex: 1000,
   },
   content: {
-    top: "45%",
+    top: "300px",
     left: "50%",
     right: "100px",
     bottom: "auto",
@@ -36,6 +36,7 @@ const customStyles: Modal.Styles = {
     justifyContent: "center",
     alignItems: "flex-start",
     flexDirection: "column",
+    maxWidth: "800px",
   },
 };
 const alarmSound = new Audio(alarm);
