@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactTooltip from "react-tooltip";
 import Modal from "react-modal";
 import { useAppSelector, useAppDispatch } from "../../App/hooks";
@@ -24,7 +24,7 @@ const customStyles: Modal.Styles = {
     zIndex: 1000,
   },
   content: {
-    top: "25%",
+    top: "45%",
     left: "50%",
     right: "100px",
     bottom: "auto",
@@ -44,6 +44,10 @@ const Settings = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settingsReducer);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  }, []);
   function openModal() {
     setModalIsOpen(true);
   }
@@ -87,7 +91,7 @@ const Settings = () => {
       >
         <i className="fas fa-cog"></i>
       </button>
-      <ReactTooltip />
+      <ReactTooltip disable={isMobile} />
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}

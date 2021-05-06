@@ -1,17 +1,20 @@
 import ReactTooltip from "react-tooltip";
 import Settings from "./Settings";
-import { useAppDispatch, useAppSelector } from "../App/hooks";
+import { useAppDispatch } from "../App/hooks";
 import { userUsedTimer, timerInitRequest } from "../../actions/timer";
 
 import "./Nav.css";
+import { useEffect, useState } from "react";
 
 const Nav = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  }, []);
   const dispatch = useAppDispatch();
-  const { hasUserUsedTimer } = useAppSelector((state) => state.timerReducer);
   function handleClickRefresh() {
     dispatch(timerInitRequest(true));
     dispatch(userUsedTimer(false));
-    console.log(`hasUserUsedTimer`, hasUserUsedTimer);
   }
   return (
     <nav className="Nav">
@@ -25,7 +28,7 @@ const Nav = () => {
             className="refresh-button"
           >
             <i className="fas fa-sync-alt"></i>
-            <ReactTooltip />
+            <ReactTooltip disable={isMobile} />
           </button>
           <Settings />
         </li>
