@@ -25,7 +25,7 @@
 .volume-wrapper {
   display: flex;
   align-items: center;
-  width: 24rem;
+  width: 90%;
 }
 .volume-slider {
   -webkit-appearance: none;
@@ -36,8 +36,8 @@
   border-radius: 5px;
   transition: opacity 0.2s;
   background: var(--isabelline);
-  width: 80%;
-  min-width: 150px;
+  width: 100%;
+  min-width: 100px;
   margin-right: 1rem;
 }
 .volume-slider::-webkit-slider-thumb {
@@ -61,7 +61,8 @@
   width: 3rem;
   height: 3rem;
 }
-.short-break-time-input {
+.short-break-time-input,
+.long-break-time-input {
   margin-top: 5px;
   outline: none;
   width: 4rem;
@@ -71,9 +72,10 @@
   width: 25px;
   height: 25px;
   background: #000;
+  margin-top: 5px;
 }
 .options-wrapper {
   display: flex;
   flex-direction: column;
-  margin: 5px;
+  margin: 10px;
 }

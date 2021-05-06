@@ -9,6 +9,8 @@ import {
   ITimerMode,
   ActionTypes,
   TIMER_INIT_REQUEST,
+  HAS_USER_USED_TIMER,
+  SHOW_TIMER,
 } from "../actions/timer";
 
 export interface ITimerState {
@@ -21,6 +23,8 @@ export interface ITimerState {
   timerCurrentModeIndex: number;
   timerNextModeIndex: number;
   timerInit: boolean | null;
+  hasUserUsedTimer: boolean;
+  isShowTimer: boolean;
 }
 const initialState: ITimerState = {
   isStopped: true,
@@ -41,6 +45,8 @@ const initialState: ITimerState = {
   timerCurrentModeIndex: 0,
   timerNextModeIndex: 1,
   timerInit: null,
+  hasUserUsedTimer: false,
+  isShowTimer: false,
 };
 
 const timerReducer = (
@@ -92,6 +98,16 @@ const timerReducer = (
         timerInit: action.payload,
         timerCurrentModeIndex: 0,
         timerNextModeIndex: 1,
+      };
+    case HAS_USER_USED_TIMER:
+      return {
+        ...state,
+        hasUserUsedTimer: action.payload,
+      };
+    case SHOW_TIMER:
+      return {
+        ...state,
+        isShowTimer: action.payload,
       };
     default:
       return state;

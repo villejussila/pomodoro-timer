@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { convertStringTimeToNumberFormat } from "../../../../lib/utils";
 import { useAppSelector } from "../../../App/hooks";
 import useWindowDimensions from "./useWindowDimensions";
+import { ITimerMode } from "../../../../actions/timer";
 import "./Circle.css";
 
 const Circle = () => {
@@ -22,7 +23,7 @@ const Circle = () => {
     radius * 2 * Math.PI
   );
   const [offset, setOffset] = useState<number>();
-  const [circleStyle] = useState({
+  const [circleStyle, setCircleStyle] = useState({
     zIndex: 1000,
     stroke: "var(--naples-yellow)",
     strokeDasharray: `${circumference} ${circumference}`,
@@ -41,7 +42,23 @@ const Circle = () => {
     setDimension({ radius: 273, cx: 275, cy: 275 });
     setCircumference(radius * 2 * Math.PI);
     setOffset(circumference - (progressPercent / 100) * circumference);
-  }, [width, circumference, progressPercent, radius]);
+    setCircleStyle({
+      zIndex: 1000,
+      stroke: "var(--naples-yellow)",
+      strokeDasharray: `${circumference} ${circumference}`,
+      strokeDashoffset: timer.timerMode !== ITimerMode.Work ? 0 : offset,
+      transition: "strokeDashoffset 0.35s",
+      transform: "rotate(-90deg)",
+      transformOrigin: "50% 50%",
+    });
+  }, [width, circumference, progressPercent, radius, timer.timerMode, offset]);
+
+  useEffect(() => {
+    if (timer.timerMode !== ITimerMode.Work) {
+      setOffset(0);
+    }
+    setProgressPercent(0);
+  }, [timer.timerMode]);
 
   return (
     <div className="Circle">

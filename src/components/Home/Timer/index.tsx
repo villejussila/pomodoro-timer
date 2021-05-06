@@ -17,6 +17,7 @@ import {
   ITimerMode,
   timerNextMode,
   timerInitRequest,
+  userUsedTimer,
 } from "../../../actions/timer";
 import Circle from "./Circle";
 import {
@@ -38,7 +39,7 @@ const Timer = () => {
   const pomodoro = useAppSelector((state) => state.pomodoroCompletedReducer);
   const settings = useAppSelector((state) => state.settingsReducer);
   const dispatch = useAppDispatch();
-  const [clickedTime, setClickedTime] = useState<boolean | null>();
+  const [isTimeClicked, setIsTimeClicked] = useState<boolean | null>();
 
   const determineTimerStartTime = useCallback(
     (timerWorkOrBreak: ITimerMode): ReturnTypeTimerStartTime => {
@@ -63,8 +64,6 @@ const Timer = () => {
     },
     [settings.shortBreakDuration, settings.longBreakDuration]
   );
-  //TODO: alarm doesn't sound if timer is running and then page refreshed, because of browser rules.
-  //    Add "CONTINUE || START" buttons interaction on refresh if LS empty
 
   //Updating timer
   useEffect(() => {
@@ -89,6 +88,9 @@ const Timer = () => {
       }
     }
     timeRef.current = setInterval(() => updateTimer(), 100);
+    return () => {
+      timeRef.current && clearInterval(timeRef.current);
+    };
     // eslint-disable-next-line
   }, [timer.endTime, timer.timerMode, timer.isStopped, dispatch]);
 
@@ -103,10 +105,12 @@ const Timer = () => {
 
   useEffect(() => {
     if (timer.stoppingTime && timer.isStopped) {
-      setClickedTime(false);
+      setIsTimeClicked(false);
     }
-    return () => setClickedTime(true);
-  }, [timer.stoppingTime, timer.isStopped]);
+    return () => {
+      setIsTimeClicked(true);
+    };
+  }, [timer.stoppingTime, timer.isStopped, dispatch]);
 
   // initialize
   useEffect(() => {
@@ -119,12 +123,8 @@ const Timer = () => {
     dispatch(timerMode(null));
   }, [timer.timerInit, dispatch]);
 
-  //Logging
-  useEffect(() => {
-    console.log(`timer.timerMode`, timer.timerMode);
-  }, [timer.timerMode]);
-
   function handleClickTimer(timerWorkOrBreak: ITimerMode) {
+    dispatch(userUsedTimer(true));
     if (timer.stoppingTime && timer.isStopped) {
       continueTimer(timer.stoppingTime, timerWorkOrBreak);
       return;
@@ -215,18 +215,14 @@ const Timer = () => {
         return "START";
     }
   }
-  // DEBUG-----------------------------------------------------------------
-  useEffect(() => {
-    console.log(`timer.timerNextModeIndex`, timer.timerNextModeIndex);
-  }, [timer.timerNextModeIndex]);
-  // DEBUG----------------------------------------------------------------
+
   return (
     <div className="Timer">
       <div
         className="timer-time"
         onClick={() => handleClickTimer(timer.timerMode || ITimerMode.Work)}
       >
-        <div className={clickedTime ? "time continue" : "time paused"}>
+        <div className={isTimeClicked ? "time continue" : "time paused"}>
           {timer.isStopped && !timer.stoppingTime
             ? showCorrectTextOnTimer()
             : timer.time}
@@ -235,9 +231,6 @@ const Timer = () => {
       {timer.timerMode ? (
         <>
           <Circle />
-          {/* <div className="paused">
-            <i className="fas fa-pause"></i>
-          </div> */}
           <button className="reset-button" onClick={() => handleResetTimer()}>
             <i className="fas fa-redo"></i>
           </button>
@@ -246,8 +239,6 @@ const Timer = () => {
           </button>
         </>
       ) : null}
-      {/* <button onClick={() => dispatch(timerNextMode())}>Next timer mode</button> */}
-      {/* <div className="work-or-break">{showWorkOrBreak()}</div> */}
     </div>
   );
 };

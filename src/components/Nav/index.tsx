@@ -1,15 +1,17 @@
 import ReactTooltip from "react-tooltip";
 import Settings from "./Settings";
-import { useAppDispatch } from "../App/hooks";
-import { timerInitRequest } from "../../actions/timer";
+import { useAppDispatch, useAppSelector } from "../App/hooks";
+import { userUsedTimer, timerInitRequest } from "../../actions/timer";
 
 import "./Nav.css";
 
 const Nav = () => {
   const dispatch = useAppDispatch();
-
+  const { hasUserUsedTimer } = useAppSelector((state) => state.timerReducer);
   function handleClickRefresh() {
     dispatch(timerInitRequest(true));
+    dispatch(userUsedTimer(false));
+    console.log(`hasUserUsedTimer`, hasUserUsedTimer);
   }
   return (
     <nav className="Nav">
