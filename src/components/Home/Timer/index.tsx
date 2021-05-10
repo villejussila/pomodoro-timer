@@ -65,7 +65,6 @@ const Timer = () => {
     [settings.shortBreakDuration, settings.longBreakDuration]
   );
 
-  //Updating timer
   useEffect(() => {
     function updateTimer() {
       if (timer.isStopped) return;
@@ -94,7 +93,6 @@ const Timer = () => {
     // eslint-disable-next-line
   }, [timer.endTime, timer.timerMode, timer.isStopped, dispatch]);
 
-  //Handle stopping timer and setting next mode
   useEffect(() => {
     if (timer.isStopped && timer.time === "00:00") {
       dispatch(timerNextMode());
@@ -112,7 +110,7 @@ const Timer = () => {
     };
   }, [timer.stoppingTime, timer.isStopped, dispatch]);
 
-  // initialize
+  // initialize timer
   useEffect(() => {
     if (!timer.timerInit) return;
     dispatch(timerStopped());
