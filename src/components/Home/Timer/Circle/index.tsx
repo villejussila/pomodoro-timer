@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { convertStringTimeToNumberFormat } from "../../../../lib/utils";
+import React, { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../../App/hooks";
 import useWindowDimensions from "./useWindowDimensions";
 import { ITimerMode } from "../../../../actions/timer";
@@ -8,10 +7,18 @@ import "./Circle.css";
 const Circle = () => {
   const timer = useAppSelector((state) => state.timerReducer);
   const [progressPercent, setProgressPercent] = useState<number>(0);
+
+  //Updating circle only once a second for better performance
+  const latestRef = useRef<string>();
   useEffect(() => {
-    let time = convertStringTimeToNumberFormat(timer.time);
-    let multiplier = 4;
-    setProgressPercent(100 - time * multiplier || 0);
+    if (!latestRef.current || latestRef.current !== timer.time.timeStr) {
+      let latest = timer.time.timeStr;
+      let time = timer.time.timeMs / 60000;
+      let multiplier = 4;
+      setProgressPercent(100 - time * multiplier || 0);
+      latestRef.current = latest;
+      return;
+    }
   }, [timer.time]);
 
   const [{ radius, cx, cy }, setDimension] = useState({
@@ -37,20 +44,31 @@ const Circle = () => {
   useEffect(() => {
     if (width <= 680) {
       setDimension({ radius: 122, cx: 124, cy: 124 });
-      return;
+      setCircumference(radius * 2 * Math.PI);
+      setOffset(circumference - (progressPercent / 100) * circumference);
+      setCircleStyle({
+        zIndex: 1000,
+        stroke: "var(--naples-yellow)",
+        strokeDasharray: `${circumference} ${circumference}`,
+        strokeDashoffset: timer.timerMode !== ITimerMode.Work ? 0 : offset,
+        transition: "strokeDashoffset 0.35s",
+        transform: "rotate(-90deg)",
+        transformOrigin: "50% 50%",
+      });
+    } else {
+      setDimension({ radius: 273, cx: 275, cy: 275 });
+      setCircumference(radius * 2 * Math.PI);
+      setOffset(circumference - (progressPercent / 100) * circumference);
+      setCircleStyle({
+        zIndex: 1000,
+        stroke: "var(--naples-yellow)",
+        strokeDasharray: `${circumference} ${circumference}`,
+        strokeDashoffset: timer.timerMode !== ITimerMode.Work ? 0 : offset,
+        transition: "strokeDashoffset 0.35s",
+        transform: "rotate(-90deg)",
+        transformOrigin: "50% 50%",
+      });
     }
-    setDimension({ radius: 273, cx: 275, cy: 275 });
-    setCircumference(radius * 2 * Math.PI);
-    setOffset(circumference - (progressPercent / 100) * circumference);
-    setCircleStyle({
-      zIndex: 1000,
-      stroke: "var(--naples-yellow)",
-      strokeDasharray: `${circumference} ${circumference}`,
-      strokeDashoffset: timer.timerMode !== ITimerMode.Work ? 0 : offset,
-      transition: "strokeDashoffset 0.35s",
-      transform: "rotate(-90deg)",
-      transformOrigin: "50% 50%",
-    });
   }, [width, circumference, progressPercent, radius, timer.timerMode, offset]);
 
   useEffect(() => {

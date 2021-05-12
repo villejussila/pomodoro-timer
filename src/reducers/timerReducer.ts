@@ -11,11 +11,12 @@ import {
   TIMER_INIT_REQUEST,
   HAS_USER_USED_TIMER,
   SHOW_TIMER,
+  timeType,
 } from "../actions/timer";
 
 export interface ITimerState {
   isStopped: boolean;
-  time: string;
+  time: timeType;
   endTime: number | null;
   stoppingTime: string | null;
   timerMode: ITimerMode | null;
@@ -28,7 +29,7 @@ export interface ITimerState {
 }
 const initialState: ITimerState = {
   isStopped: true,
-  time: "25:00",
+  time: { timeStr: "25:00", timeMs: 1500000 },
   endTime: null,
   stoppingTime: null,
   timerMode: null,

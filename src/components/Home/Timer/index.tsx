@@ -31,11 +31,11 @@ interface ReturnTypeTimerStartTime {
   minutes: number;
   time: string;
 }
+const alarmSound = new Audio(alarm);
 
 const Timer = () => {
   const timeRef = useRef<NodeJS.Timeout>();
   const timer = useAppSelector((state) => state.timerReducer);
-  const alarmSound = new Audio(alarm);
   const pomodoro = useAppSelector((state) => state.pomodoroCompletedReducer);
   const settings = useAppSelector((state) => state.settingsReducer);
   const dispatch = useAppDispatch();
@@ -64,7 +64,6 @@ const Timer = () => {
     },
     [settings.shortBreakDuration, settings.longBreakDuration]
   );
-
   useEffect(() => {
     function updateTimer() {
       if (timer.isStopped) return;
@@ -73,20 +72,22 @@ const Timer = () => {
         const target = timer.endTime - now > 0 ? timer.endTime - now : 0;
         const countdownTime = getCountingDownMinutesAndSeconds(target);
         if (target > 0) {
-          return dispatch(
-            timerTime(
-              `${countdownTime.minutesPadded}:${countdownTime.secondsPadded}`
-            )
+          dispatch(
+            timerTime({
+              timeStr: `${countdownTime.minutesPadded}:${countdownTime.secondsPadded}`,
+              timeMs: countdownTime.time,
+            })
           );
+          return;
         }
         timeRef.current && clearInterval(timeRef.current);
-        dispatch(timerTime("00:00"));
+        dispatch(timerTime({ timeStr: "00:00", timeMs: 0 }));
         dispatch(timerStopped());
         alarmSound.volume = settings.volume;
         alarmSound.play();
       }
     }
-    timeRef.current = setInterval(() => updateTimer(), 100);
+    timeRef.current = setInterval(() => updateTimer(), 250);
     return () => {
       timeRef.current && clearInterval(timeRef.current);
     };
@@ -94,10 +95,10 @@ const Timer = () => {
   }, [timer.endTime, timer.timerMode, timer.isStopped, dispatch]);
 
   useEffect(() => {
-    if (timer.isStopped && timer.time === "00:00") {
+    if (timer.isStopped && timer.time.timeStr === "00:00") {
       dispatch(timerNextMode());
       dispatch(timerStoppingTime(null));
-      dispatch(timerTime("25:00"));
+      dispatch(timerTime({ timeStr: "25:00", timeMs: 1500000 }));
     }
   }, [timer.isStopped, timer.time, dispatch]);
 
@@ -148,7 +149,7 @@ const Timer = () => {
     if (timeRef.current) {
       clearInterval(timeRef.current);
     }
-    dispatch(timerStoppingTime(timer.time));
+    dispatch(timerStoppingTime(timer.time.timeStr));
   }
 
   function continueTimer(
@@ -172,8 +173,8 @@ const Timer = () => {
     }
     dispatch(timerStoppingTime(null));
     if (timer.timerMode) {
-      const { time } = determineTimerStartTime(timer.timerMode);
-      dispatch(timerTime(time));
+      const { time, minutes } = determineTimerStartTime(timer.timerMode);
+      dispatch(timerTime({ timeStr: time, timeMs: minutes * 60000 }));
     }
   }
 
@@ -223,7 +224,7 @@ const Timer = () => {
         <div className={isTimeClicked ? "time continue" : "time paused"}>
           {timer.isStopped && !timer.stoppingTime
             ? showCorrectTextOnTimer()
-            : timer.time}
+            : timer.time.timeStr}
         </div>
       </div>
       {timer.timerMode ? (

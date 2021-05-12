@@ -2,7 +2,6 @@ import "./CompletedPomodoros.css";
 import ProgressLine from "./ProgressLine";
 import { useAppSelector, useAppDispatch } from "../../App/hooks";
 import React, { useCallback, useEffect } from "react";
-import { convertStringTimeToNumberFormat } from "../../../lib/utils";
 import {
   cycleCompleted,
   pomodoroCount,
@@ -34,7 +33,7 @@ const CompletedPomodoros = () => {
 
   useEffect(() => {
     if (timer.timerMode !== "WORK") return;
-    let time = convertStringTimeToNumberFormat(timer.time);
+    let time = timer.time.timeMs;
     const pomodoroCountMultiplier = 4;
     const progressCalculated = 100 - time * pomodoroCountMultiplier || 0;
     const currentProgressIndex = timer.timerCurrentModeIndex / 2;

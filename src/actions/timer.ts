@@ -15,11 +15,14 @@ export enum ITimerMode {
   LongBreak = "LONG_BREAK",
   TEST = "TEST",
 }
-
+export type timeType = {
+  timeStr: string;
+  timeMs: number;
+};
 export type ActionTypes =
   | { type: typeof TIMER_STOPPED }
   | { type: typeof TIMER_RUNNING }
-  | { type: typeof TIMER_TIME; payload: string }
+  | { type: typeof TIMER_TIME; payload: timeType }
   | { type: typeof END_TIME; payload: number }
   | { type: typeof TIMER_STOPPING_TIME; payload: string | null }
   | { type: typeof TIMER_MODE; payload: ITimerMode | null }
@@ -38,10 +41,10 @@ export const timerRunning = (): ActionTypes => {
     type: TIMER_RUNNING,
   };
 };
-export const timerTime = (countdownTime: string): ActionTypes => {
+export const timerTime = (time: timeType): ActionTypes => {
   return {
     type: TIMER_TIME,
-    payload: countdownTime,
+    payload: time,
   };
 };
 export const timerEndTime = (timeMs: number): ActionTypes => {
