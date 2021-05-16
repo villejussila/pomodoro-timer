@@ -123,10 +123,6 @@ const Timer = () => {
     dispatch(timerMode(null));
   }, [timer.timerInit, dispatch]);
 
-  useEffect(() => {
-    console.log(`isLoading`, isLoading);
-  }, [isLoading]);
-
   function handleClickTimer(timerWorkOrBreak: ITimerMode) {
     setIsLoading(true);
     dispatch(userUsedTimer(true));
@@ -173,7 +169,6 @@ const Timer = () => {
   }
 
   function handleResetTimer() {
-    console.log("reset");
     dispatch(timerStopped());
     if (timeRef.current) {
       clearInterval(timeRef.current);
