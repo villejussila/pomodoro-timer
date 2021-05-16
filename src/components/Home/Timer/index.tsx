@@ -40,7 +40,7 @@ const Timer = () => {
   const settings = useAppSelector((state) => state.settingsReducer);
   const dispatch = useAppDispatch();
   const [isTimeClicked, setIsTimeClicked] = useState<boolean | null>();
-
+  const [isLoading, setIsLoading] = useState<boolean>();
   const determineTimerStartTime = useCallback(
     (timerWorkOrBreak: ITimerMode): ReturnTypeTimerStartTime => {
       switch (timerWorkOrBreak) {
@@ -78,6 +78,7 @@ const Timer = () => {
               timeMs: countdownTime.time,
             })
           );
+          setIsLoading(false);
           return;
         }
         timeRef.current && clearInterval(timeRef.current);
@@ -122,9 +123,15 @@ const Timer = () => {
     dispatch(timerMode(null));
   }, [timer.timerInit, dispatch]);
 
+  useEffect(() => {
+    console.log(`isLoading`, isLoading);
+  }, [isLoading]);
+
   function handleClickTimer(timerWorkOrBreak: ITimerMode) {
+    setIsLoading(true);
     dispatch(userUsedTimer(true));
     if (timer.stoppingTime && timer.isStopped) {
+      setIsLoading(false);
       continueTimer(timer.stoppingTime, timerWorkOrBreak);
       return;
     }
@@ -133,10 +140,10 @@ const Timer = () => {
       return;
     }
     if (!timer.isStopped) {
+      setIsLoading(false);
       stopTimer();
     }
   }
-
   function startTimer(timerWorkOrBreak: ITimerMode) {
     const time = determineTimerStartTime(timerWorkOrBreak);
     dispatch(timerEndTime(getEndTimeInMs(time.minutes)));
@@ -224,7 +231,9 @@ const Timer = () => {
         <div className={isTimeClicked ? "time continue" : "time paused"}>
           {timer.isStopped && !timer.stoppingTime
             ? showCorrectTextOnTimer()
-            : timer.time.timeStr}
+            : !isLoading
+            ? timer.time.timeStr
+            : ":"}
         </div>
       </div>
       {timer.timerMode ? (
